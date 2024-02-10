@@ -34,7 +34,7 @@ class Field with ChangeNotifier {
   }
 }
 
-class EnvelopeSettings {
+class EnvelopeSettings with ChangeNotifier {
   final String title = "Envelope";
   // Indicates if a slider panel is visible or not.
   bool _isExpanded = false;
@@ -44,20 +44,24 @@ class EnvelopeSettings {
   final Field decay = Field(0.0, 1.0, 0.0, "Decay");
 
   bool get isExpanded {
+    debugPrint('isExpanded $_isExpanded');
     return _isExpanded;
   }
 
   void expand() {
     _isExpanded = true;
-    // notifyListeners();
+    debugPrint('expanding');
+    notifyListeners();
   }
 
   void collapse() {
     _isExpanded = false;
+    debugPrint('collapsing');
+    notifyListeners();
   }
 }
 
-class AppSettings {
+class AppSettings with ChangeNotifier {
   final Field name = Field.noRange("", "Name");
   final Field sfxrFile = Field.noRange("", "Sfxr File");
   final Field waveFile = Field.noRange("", "Wave File");
@@ -70,7 +74,7 @@ class AppSettings {
   final Field wave = Field.noRange(WaveForm.none, "None");
 }
 
-class SettingsModel {
+class SettingsModel with ChangeNotifier {
   final appSettings = AppSettings();
   final envelopeSettings = EnvelopeSettings();
 }
