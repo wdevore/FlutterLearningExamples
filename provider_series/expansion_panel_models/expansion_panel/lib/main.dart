@@ -91,13 +91,8 @@ class MyHomePage extends StatelessWidget {
 class EnvelopeExpansionPanelList extends StatelessWidget {
   const EnvelopeExpansionPanelList({super.key});
 
-  // inside the widget wrap with multiprovider that provides
-  // each Field notifier
-  // Then create watches for each slider
-
   @override
   Widget build(BuildContext context) {
-    // MultiProvider(EnvelopeSettings,
     final envelopeSettings = context.watch<EnvelopeSettings>();
 
     return ExpansionPanelList(
@@ -137,13 +132,19 @@ class EnvelopeExpansionPanelList extends StatelessWidget {
             children: [
               // Wrap in ChangeNotifierProvider.value for attack
               // Have child use Consumer
-              SettingsSlider(
-                min: envelopeSettings.attack.min,
-                max: envelopeSettings.attack.max,
-                title: envelopeSettings.attack.label,
-                setFieldValue: (value) => envelopeSettings.attack.value = value,
-                getFieldValue: () => envelopeSettings.attack.value,
+              // SettingsSlider(
+              //   min: envelopeSettings.attack.min,
+              //   max: envelopeSettings.attack.max,
+              //   title: envelopeSettings.attack.label,
+              //   setFieldValue: (value) => envelopeSettings.attack.value = value,
+              //   getFieldValue: () => envelopeSettings.attack.value,
+              // ),
+
+              ChangeNotifierProvider.value(
+                value: envelopeSettings.attack,
+                child: const SettingsSlider(),
               ),
+
               // Text('sustain'),
               // Text('punch'),
               // Text('decay'),
