@@ -22,7 +22,7 @@ class SettingsSlider extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 2.0),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -35,7 +35,7 @@ class SettingsSlider extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 5,
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: Colors.orange,

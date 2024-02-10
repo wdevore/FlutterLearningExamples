@@ -38,10 +38,29 @@ class EnvelopeSettings with ChangeNotifier {
   final Field punch = Field(0.0, 1.0, 0.0, "Punch");
   final Field decay = Field(0.0, 1.0, 0.0, "Decay");
 
-  void modify(Field f, dynamic v) {
-    f.value = v;
+  bool get isExpanded {
+    return _isExpanded;
+  }
+
+  void expanded() {
+    _isExpanded = true;
     notifyListeners();
   }
+
+  void collapsed() {
+    _isExpanded = false;
+    notifyListeners();
+  }
+}
+
+class FrequencySettings with ChangeNotifier {
+  final String title = "Frequency";
+  bool _isExpanded = false;
+
+  final Field frequency = Field(0.04, 2.0, 0.04, "Frequency");
+  final Field minCutoff = Field(0.0, 1.0, 0.0, "MinCutoff");
+  final Field slide = Field(-1.0, 1.0, 0.0, "Slide");
+  final Field deltaSlide = Field(-1.0, 1.0, 0.0, "DeltaSlide");
 
   bool get isExpanded {
     return _isExpanded;
@@ -58,6 +77,7 @@ class EnvelopeSettings with ChangeNotifier {
   }
 }
 
-class SettingsModel with ChangeNotifier {
+class SettingsModel {
   final envelopeSettings = EnvelopeSettings();
+  final frequencySettings = FrequencySettings();
 }

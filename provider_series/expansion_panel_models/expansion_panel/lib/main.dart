@@ -4,28 +4,38 @@
 
 import 'dart:io' show Platform;
 
+import 'package:expansion_panel/envelope_expansion_panel_list.dart';
+import 'package:expansion_panel/frequency_expansion_panel_list.dart';
 import 'package:expansion_panel/model.dart';
-import 'package:expansion_panel/settings_slider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 
-void main() {
-  SettingsModel settings = SettingsModel();
+SettingsModel _settings = SettingsModel();
 
+void main() {
   setupWindow();
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider.value(
-        value: settings,
-      ),
-      ChangeNotifierProvider.value(
-        value: settings.envelopeSettings,
-      ),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
+
+  // Instead of providing notifiers at this level
+  // I do below closer to the actual expansion panel.
+  // The downside is the that model is now global to the
+  // package.
+
+  // However, the "SettingsModel" could be provided
+  // at this level.
+  // runApp(MultiProvider(
+  //   providers: [
+  //     ChangeNotifierProvider.value(
+  //       value: settings.envelopeSettings,
+  //     ),
+  //     ChangeNotifierProvider.value(
+  //       value: settings.frequencySettings,
+  //     ),
+  //   ],
+  //   child: const MyApp(),
+  // ));
 }
 
 const double windowWidth = 360;
@@ -76,9 +86,18 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Flutter Demo Home Page'),
       ),
-      body: const SingleChildScrollView(
-        child: EnvelopeExpansionPanelList(),
-      ),
+      body: ListView(children: [
+        ChangeNotifierProvider.value(
+          value: _settings.envelopeSettings,
+          child: const EnvelopeExpansionPanelList(),
+        ),
+        // EnvelopeExpansionPanelList(),
+        ChangeNotifierProvider.value(
+          value: _settings.frequencySettings,
+          child: const FrequencyExpansionPanelList(),
+        ),
+        // FrequencyExpansionPanelList(),
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         tooltip: 'Increment',
@@ -86,75 +105,4 @@ class MyHomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-class EnvelopeExpansionPanelList extends StatelessWidget {
-  const EnvelopeExpansionPanelList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final envelopeSettings = context.watch<EnvelopeSettings>();
-
-    return ExpansionPanelList(
-      expandedHeaderPadding: EdgeInsets.zero,
-      dividerColor: Colors.white,
-      animationDuration: const Duration(milliseconds: 200),
-      expansionCallback: (int index, bool isExpanded) {
-        if (isExpanded) {
-          envelopeSettings.expanded();
-        } else {
-          envelopeSettings.collapsed();
-        }
-      },
-      children: [
-        ExpansionPanel(
-          canTapOnHeader: true,
-          backgroundColor: Colors.grey,
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              isThreeLine: false,
-              title: Container(
-                alignment: Alignment.center,
-                color: Colors.black26,
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                child: Text(
-                  envelopeSettings.title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orangeAccent,
-                  ),
-                ),
-              ),
-            );
-          },
-          body: Column(
-            children: [
-              // Wrap in ChangeNotifierProvider.value for attack
-              // Have child use Consumer
-              // SettingsSlider(
-              //   min: envelopeSettings.attack.min,
-              //   max: envelopeSettings.attack.max,
-              //   title: envelopeSettings.attack.label,
-              //   setFieldValue: (value) => envelopeSettings.attack.value = value,
-              //   getFieldValue: () => envelopeSettings.attack.value,
-              // ),
-
-              ChangeNotifierProvider.value(
-                value: envelopeSettings.attack,
-                child: const SettingsSlider(),
-              ),
-
-              // Text('sustain'),
-              // Text('punch'),
-              // Text('decay'),
-            ],
-          ),
-          isExpanded: envelopeSettings.isExpanded,
-        ),
-      ],
-    );
-  }
-
-  void updateAttackFieldValue(dynamic value) {}
 }
