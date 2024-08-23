@@ -22,6 +22,7 @@ class TextListModel extends ChangeNotifier {
   ];
   int lineCnt = 0;
   static const windowSize = 10;
+  static const bufferSize = 15;
 
   // Indices range from 0 to lines.length().
   int indexStart = 0;
@@ -41,7 +42,7 @@ class TextListModel extends ChangeNotifier {
     lineCnt++;
     text = '$text$lineCnt';
     lines.add(text);
-    if (lines.length > 15) {
+    if (lines.length > bufferSize) {
       lines.removeAt(0);
     }
     scrollToBottom();
@@ -61,7 +62,7 @@ class TextListModel extends ChangeNotifier {
   }
 
   void scrollDown() {
-    // Increment indices which moves the window.
+    // Decrement indices which moves the window
     if (indexStart == 0) {
       return; // Can't move
     }
@@ -89,12 +90,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Simple text scroller',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Simple text scroller'),
     );
   }
 }
@@ -148,10 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Update queue model so scrolling widget updates.
-              // Each line has a number. A visibility list is used to control
-              // what is visible. Scrolling is simulated by updating the
-              // visibility list.
               gModel.addLine('line');
             },
             child: const Text('add'),
@@ -176,8 +173,9 @@ class _TextScrollingWidgetState extends State<TextScrollingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Iterable<String> lines = widget.model.lines
-        .getRange(widget.model.indexStart, widget.model.indexEnd);
+    TextListModel model = widget.model;
+    Iterable<String> lines =
+        model.lines.getRange(model.indexStart, model.indexEnd);
 
     controller.text = lines.join('\n');
 
